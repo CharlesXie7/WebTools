@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中文文本排版工具</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* 容器样式 */
+        .container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            padding: 20px;
+            justify-content: space-between;
+        }
+
+        .input-section, .output-section {
+            width: 48%;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        /* 输入区域样式 */
+        .input-section h2, .output-section h2 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .textarea-wrapper {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        input[type="number"], input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        /* 专用样式：各输入框在同一行 */
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .input-row input, .input-row select {
+            width: 80%; /* 控制宽度，确保每个输入框占同一行 */
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+		
+		/* 让按钮居中 */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* 结果输出区域样式 */
+        .formatted-text {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: "SimSun", "宋体", sans-serif;
+            line-height: 1.6;
+            font-size: 16px;
+            color: #333;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        /* 辅助样式 */
+        .help-text {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        .help-text a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .help-text a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 输入部分 -->
+        <div class="input-section">
+            <h2>输入部分</h2>
+
+            <!-- 标题、作者、发布网站在同一行 -->
+            <div class="input-row">
+                <div class="textarea-wrapper">
+                    <label for="title">标题：</label>
+                    <input type="text" id="title" placeholder="请输入标题">
+                </div>
+                <div class="textarea-wrapper">
+                    <label for="author">作者：</label>
+                    <input type="text" id="author" placeholder="请输入作者名">
+                </div>
+                <div class="textarea-wrapper">
+                    <label for="website">发布网站：</label>
+                    <input type="text" id="website" placeholder="请输入发布网站名">
+                </div>
+            </div>
+
+            <!-- 起始章节、终止章节和每行字符数在同一行 -->
+            <div class="input-row">
+                <div class="textarea-wrapper">
+                    <label for="startChapter">起始章节号：</label>
+                    <input type="text" id="startChapter" placeholder="请输入起始章节号">
+                </div>
+                <div class="textarea-wrapper">
+                    <label for="endChapter">终止章节号（可为空）：</label>
+                    <input type="text" id="endChapter" placeholder="请输入终止章节号（可为空）">
+                </div>
+                <div class="textarea-wrapper">
+                    <label for="charLimit">每行字符数：</label>
+                    <input type="number" id="charLimit" value="0" min="0" placeholder="为0时不做限制">
+                </div>
+            </div>
+			
+            <div class="input-row">
+                <!-- 繁简转换选择 -->
+                <div class="textarea-wrapper">
+                    <label for="convertOption">繁简转换</label>
+                    <select id="convertOption">
+                        <option value="noConversion">不转换</option>
+                        <option value="simplified2traditional">简体转繁体</option>
+                        <option value="traditional2simplified">繁体转简体</option>
+                    </select>
+                </div>
+            
+                <!-- 是否转换英文字母和数字为全角 -->
+                <div class="textarea-wrapper">
+                    <label for="fullWidth">字母和数字转换为全角</label>
+                    <select id="fullWidth">
+                        <option value="noConversion">不转换</option>
+                        <option value="conversion">转换</option>
+                    </select>
+                </div>
+            </div>
+			
+			<div class="textarea-wrapper">
+                <label for="inputText">输入文本：</label>
+                <textarea id="inputText" rows="15" ></textarea>
+            </div>
+
+			<!-- 按钮居中容器 -->
+            <div class="button-container">
+                <button onclick="formatText()">排版文本</button>
+            </div>
+        </div>
+
+        <!-- 输出部分 -->
+        <div class="output-section">
+            <h2>输出部分</h2>
+
+            <div class="textarea-wrapper">
+                <label for="formattedOutput">转换后的文本：</label>
+                <textarea id="formattedOutput" rows="27"></textarea>
+            </div>
+
+			<!-- 按钮居中容器 -->
+            <div class="button-container">
+                <button onclick="copyText()">复制文本</button>
+            </div>
+
+            <div class="help-text">
+                <p>使用此工具可以将输入的中文文本格式化为每段前空两格，并按照指定字符数进行换行。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 opencc-js 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.min.js"></script>
+
+    <script>
+        // 初始化 OpenCC
+        let converter;
+
+        function initializeConverter() {
+            const convertOption = document.getElementById('convertOption').value;
+            if (convertOption === 'noConversion') {
+				converter = null;
+			}
+			else if (convertOption === 'simplified2traditional') {
+                converter = OpenCC.Converter({ from: 'cn', to: 'tw' });  // 简体转繁体
+            } else {
+                converter = OpenCC.Converter({ from: 'tw', to: 'cn' });  // 繁体转简体
+            }
+        }
+		
+		// 将英文字母和数字转换为全角
+        function convertToFullWidth(str) {
+            return str.replace(/([a-zA-Z0-9])/g, function (match) {
+                return String.fromCharCode(match.charCodeAt(0) + 0xFEE0); // 转换为全角
+            });
+        }
+
+        // 格式化文本的函数
+        function formatText() {
+            initializeConverter();
+
+            // 获取输入的内容
+            var inputText = document.getElementById('inputText').value;
+            var title = document.getElementById('title').value;
+            var author = document.getElementById('author').value;
+            var startChapter = document.getElementById('startChapter').value;
+            var endChapter = document.getElementById('endChapter').value;
+            var website = document.getElementById('website').value;
+            var charLimit = parseInt(document.getElementById('charLimit').value);
+			var fullWidth = document.getElementById('fullWidth').value;
+
+            // 章节号格式化
+			var formattedChapter;
+            if (!endChapter) {
+				formattedChapter = `（${startChapter}）`;
+            } else {
+				formattedChapter = `（${startChapter}-${endChapter}）`;
+			}
+
+            // 标题格式化：居中且带【】和章节号
+            var formattedTitle = `【${title}】${formattedChapter}`;
+            // TODO 换用合适的居中方法
+            // 由于网页本身有自动换行，暂时以最大35个字符为例进行居中
+            var prefixSpaceCount = (35 - formattedTitle.length) / 2;
+            var prefixSpace = `　`.repeat(prefixSpaceCount);
+            formattedTitle = prefixSpace + formattedTitle;
+
+            var meta = `${formattedTitle}\n\n\n作者：${author}\n`;
+
+            if (website.length > 0) {
+                // 获取当前日期
+                var currentDate = new Date();
+                var formattedDate = currentDate.getFullYear() + '/' +
+                                (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                                currentDate.getDate().toString().padStart(2, '0');
+
+                var postInfo = `${formattedDate} 发布于 ${website}\n`;
+                meta += postInfo;
+            }
+
+			// 执行繁简转换（如果选择了转换）
+            var convertedText = inputText;
+            if (converter) {
+                meta = converter(meta);
+                convertedText = converter(convertedText);
+            }
+
+            // 如果勾选了全角转换
+            if (fullWidth === 'conversion') {
+                convertedText = convertToFullWidth(convertedText);
+            }
+
+            // 将文本按每行最大字符数分割并处理
+            var paragraphs = convertedText.split('\n').filter(text => text != '').map(function(paragraph) {
+                paragraph = '　　' + paragraph.trim();
+
+                if (charLimit > 0) {
+                    var lines = [];
+                    while (paragraph.length > charLimit) {
+                        lines.push(paragraph.substring(0, charLimit));
+                        paragraph = paragraph.substring(charLimit);
+                    }
+                    if (paragraph.length > 0) {
+                        lines.push(paragraph);
+                    }
+                    return lines.join('\n');
+                }
+
+                return paragraph;
+            });
+            var formattedText = paragraphs.join('\n\n');
+
+            meta += `字数：${formattedText.length}\n\n\n`;
+
+            // 将排版好的文本生成最终的格式
+            var finalText = `${meta}${formattedText}`;
+
+            // 将结果显示到可编辑的 textarea 中
+            document.getElementById('formattedOutput').value = finalText;
+        }
+
+        // 复制文本的函数
+        function copyText() {
+            var textArea = document.getElementById('formattedOutput');
+            textArea.select();  // 选择文本
+            document.execCommand('copy');  // 执行复制操作
+
+            // 提示用户已复制
+            alert('文本已复制到剪贴板！');
+        }
+    </script>
+
+</body>
+</html>
