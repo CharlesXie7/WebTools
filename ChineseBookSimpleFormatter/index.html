@@ -306,7 +306,7 @@
             }
 
             // 将文本按每行最大字符数分割并处理
-            var paragraphs = convertedText.split('\n').filter(text => text != '').map(function(paragraph) {
+            var paragraphs = convertedText.split('\n').filter(text => text.trim() != '').map(function(paragraph) {
                 paragraph = '　　' + paragraph.trim();
 
                 if (charLimit > 0) {
