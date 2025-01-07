@@ -277,8 +277,10 @@
             // TODO 换用合适的居中方法
             // 由于网页本身有自动换行，暂时以最大35个字符为例进行居中
             var prefixSpaceCount = (35 - formattedTitle.length) / 2;
-            var prefixSpace = `　`.repeat(prefixSpaceCount);
-            formattedTitle = prefixSpace + formattedTitle;
+            if (prefixSpaceCount > 0) {
+                var prefixSpace = `　`.repeat(prefixSpaceCount);
+                formattedTitle = prefixSpace + formattedTitle;
+            }
 
             var meta = `${formattedTitle}\n\n\n作者：${author}\n`;
 
