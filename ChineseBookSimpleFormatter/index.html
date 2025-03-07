@@ -214,13 +214,23 @@
             <h2>输出部分</h2>
 
             <div class="textarea-wrapper">
-                <label for="formattedOutput">转换后的文本：</label>
-                <textarea id="formattedOutput" rows="27"></textarea>
+                <label for="briefOutput">简要信息：</label>
+                <textarea id="briefOutput" rows="1"></textarea>
             </div>
 
 			<!-- 按钮居中容器 -->
             <div class="button-container">
-                <button onclick="copyText()">复制文本</button>
+                <button onclick="copyText('briefOutput')">复制简要信息</button>
+            </div>
+
+            <div class="textarea-wrapper">
+                <label for="formattedOutput">转换后的文本：</label>
+                <textarea id="formattedOutput" rows="20"></textarea>
+            </div>
+
+			<!-- 按钮居中容器 -->
+            <div class="button-container">
+                <button onclick="copyText('formattedOutput')">复制文本</button>
             </div>
 
             <div class="help-text">
@@ -287,8 +297,11 @@
 				formattedChapter = `（${startChapter}-${endChapter}）`;
 			}
 
-            // 标题格式化：居中且带【】和章节号
             var formattedTitle = `【${title}】${formattedChapter}`;
+            var formattedAuthor = `作者：${author}`;
+            var briefText = formattedTitle + formattedAuthor;
+
+            // 标题格式化：居中且带【】和章节号
             // TODO 换用合适的居中方法
             // 由于网页本身有自动换行，暂时以最大35个字符为例进行居中
             var prefixSpaceCount = (35 - formattedTitle.length) / 2;
@@ -297,7 +310,7 @@
                 formattedTitle = prefixSpace + formattedTitle;
             }
 
-            var meta = `${formattedTitle}\n\n\n作者：${author}\n`;
+            var meta = `${formattedTitle}\n\n\n${formattedAuthor}\n`;
 
             if (website.length > 0) {
                 // 获取当前日期
@@ -348,12 +361,13 @@
             var finalText = `${meta}${formattedText}`;
 
             // 将结果显示到可编辑的 textarea 中
+            document.getElementById('briefOutput').value = briefText;
             document.getElementById('formattedOutput').value = finalText;
         }
 
         // 复制文本的函数
-        function copyText() {
-            var textArea = document.getElementById('formattedOutput');
+        function copyText(elementId) {
+            var textArea = document.getElementById(elementId);
             textArea.select();  // 选择文本
             document.execCommand('copy');  // 执行复制操作
 
