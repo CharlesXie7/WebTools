@@ -281,11 +281,11 @@
 
             // 获取输入的内容
             var inputText = document.getElementById('inputText').value;
-            var title = document.getElementById('title').value;
-            var author = document.getElementById('author').value;
+            var title = document.getElementById('title').value.trim();
+            var author = document.getElementById('author').value.trim();
             var startChapter = document.getElementById('startChapter').value;
             var endChapter = document.getElementById('endChapter').value;
-            var website = document.getElementById('website').value;
+            var website = document.getElementById('website').value.trim();
             var charLimit = parseInt(document.getElementById('charLimit').value);
 			var fullWidth = document.getElementById('fullWidth').value;
 
