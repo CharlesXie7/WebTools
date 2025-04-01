@@ -225,12 +225,21 @@
 
             <div class="textarea-wrapper">
                 <label for="formattedOutput">转换后的文本：</label>
-                <textarea id="formattedOutput" rows="20"></textarea>
+                <textarea id="formattedOutput" rows="10"></textarea>
             </div>
 
 			<!-- 按钮居中容器 -->
             <div class="button-container">
                 <button onclick="copyText('formattedOutput')">复制文本</button>
+            </div>
+
+            <div class="textarea-wrapper">
+                <label for="publishPage">发布页面：</label>
+                <textarea id="publishPage" rows="1"></textarea>
+            </div>
+
+            <div class="button-container">
+                <button onclick="openPublishPage()">打开发布页</button>
             </div>
 
             <div class="help-text">
@@ -374,6 +383,15 @@
 
             // 提示用户已复制
             alert('文本已复制到剪贴板！');
+        }
+
+        function openPublishPage() {
+            var publishPage = document.getElementById("publishPage").value;
+            if (publishPage) {
+                window.open(publishPage);
+            } else {
+                alert('发布页为空');
+            }
         }
     </script>
 
