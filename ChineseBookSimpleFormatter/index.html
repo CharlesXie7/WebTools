@@ -8,8 +8,8 @@
     <style>
         /* 全局样式 */
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7f6;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background-color: #f0f2f5;
             color: #333;
             margin: 0;
             padding: 0;
@@ -26,19 +26,20 @@
             width: 90%;
             max-width: 1200px;
             padding: 20px;
-            justify-content: space-between;
+            gap: 20px;
         }
 
+        /* 输入和输出部分 */
         .input-section,
         .output-section {
-            width: 48%;
-            background-color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            padding: 20px;
+            flex: 1;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            padding: 25px;
         }
 
-        /* 输入区域样式 */
+        /* 标题 */
         .input-section h2,
         .output-section h2 {
             font-size: 24px;
@@ -47,71 +48,80 @@
             text-align: center;
         }
 
+        /* 输入组容器 */
         .textarea-wrapper {
             display: flex;
             flex-direction: column;
             margin-bottom: 15px;
-            text-align: left;
         }
 
-        input[type="number"],
-        input[type="text"],
-        select {
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 100%;
-            margin-top: 5px;
-        }
-
-        /* 专用样式：各输入框在同一行 */
+        /* 输入行排列 */
         .input-row {
             display: flex;
             justify-content: space-between;
             gap: 10px;
         }
 
-        .input-row input,
-        .input-row select {
-            width: 80%;
-            /* 控制宽度，确保每个输入框占同一行 */
+        /* 控制输入控件一致宽度 */
+        .input-row .textarea-wrapper {
+            flex: 1;
         }
 
+        /* 输入控件统一样式 */
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 10px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        /* 文本域 */
         textarea {
             width: 100%;
             padding: 10px;
             font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
             resize: vertical;
-            margin-bottom: 10px;
+            box-sizing: border-box;
         }
 
+        /* 按钮 */
         button {
             background-color: #3498db;
             color: white;
             font-size: 16px;
             padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.3s;
-            margin-top: 10px;
         }
 
         button:hover {
             background-color: #2980b9;
         }
 
-        /* 让按钮居中 */
+        /* 居中按钮容器 */
         .button-container {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
-        /* 结果输出区域样式 */
+        /* 输出文本样式 */
         .formatted-text {
             white-space: pre-wrap;
             word-wrap: break-word;
@@ -123,11 +133,12 @@
             text-align: left;
         }
 
-        /* 辅助样式 */
+        /* 辅助信息 */
         .help-text {
             font-size: 14px;
             color: #7f8c8d;
             margin-top: 10px;
+            text-align: center;
         }
 
         .help-text a {
@@ -152,15 +163,15 @@
             <div class="input-row">
                 <div class="textarea-wrapper">
                     <label for="title">标题：</label>
-                    <input type="text" id="title" placeholder="请输入标题">
+                    <input type="text" id="title">
                 </div>
                 <div class="textarea-wrapper">
                     <label for="author">作者：</label>
-                    <input type="text" id="author" placeholder="请输入作者名">
+                    <input type="text" id="author">
                 </div>
                 <div class="textarea-wrapper">
                     <label for="website">发布网站：</label>
-                    <input type="text" id="website" placeholder="请输入发布网站名">
+                    <input type="text" id="website" placeholder="同时生成时间信息">
                 </div>
             </div>
 
@@ -168,15 +179,15 @@
             <div class="input-row">
                 <div class="textarea-wrapper">
                     <label for="startChapter">起始章节号：</label>
-                    <input type="text" id="startChapter" placeholder="请输入起始章节号" oninput="updateEndChapter()">
+                    <input type="text" id="startChapter" placeholder="建议使用阿拉伯数字" oninput="updateEndChapter()">
                 </div>
                 <div class="textarea-wrapper">
                     <label for="chapterCount">章节数：</label>
-                    <input type="text" id="chapterCount" placeholder="请输入章节数" oninput="updateEndChapter()">
+                    <input type="text" id="chapterCount" placeholder="可自动计算终止章节号" oninput="updateEndChapter()">
                 </div>
                 <div class="textarea-wrapper">
-                    <label for="endChapter">终止章节号（可为空）：</label>
-                    <input type="text" id="endChapter" placeholder="请输入终止章节号（可为空）">
+                    <label for="endChapter">终止章节号：</label>
+                    <input type="text" id="endChapter" placeholder="单章时可为空">
                 </div>
             </div>
 
@@ -234,7 +245,7 @@
 
             <div class="textarea-wrapper">
                 <label for="formattedOutput">转换后的文本：</label>
-                <textarea id="formattedOutput" rows="10"></textarea>
+                <textarea id="formattedOutput" rows="14"></textarea>
             </div>
 
             <!-- 按钮居中容器 -->
@@ -252,7 +263,7 @@
             </div>
 
             <div class="help-text">
-                <p>使用此工具可以将输入的中文文本格式化为每段前空两格，并按照指定字符数进行换行。</p>
+                <p>将输入的文本排版成段前空两格，按照指定字符数进行换行，段落间空一行的格式。</p>
             </div>
         </div>
     </div>
