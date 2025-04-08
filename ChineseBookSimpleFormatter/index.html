@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,7 +29,8 @@
             justify-content: space-between;
         }
 
-        .input-section, .output-section {
+        .input-section,
+        .output-section {
             width: 48%;
             background-color: white;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -37,7 +39,8 @@
         }
 
         /* 输入区域样式 */
-        .input-section h2, .output-section h2 {
+        .input-section h2,
+        .output-section h2 {
             font-size: 24px;
             color: #2c3e50;
             margin-bottom: 20px;
@@ -51,7 +54,9 @@
             text-align: left;
         }
 
-        input[type="number"], input[type="text"], select {
+        input[type="number"],
+        input[type="text"],
+        select {
             padding: 8px;
             font-size: 16px;
             border: 1px solid #ddd;
@@ -67,8 +72,10 @@
             gap: 10px;
         }
 
-        .input-row input, .input-row select {
-            width: 80%; /* 控制宽度，确保每个输入框占同一行 */
+        .input-row input,
+        .input-row select {
+            width: 80%;
+            /* 控制宽度，确保每个输入框占同一行 */
         }
 
         textarea {
@@ -96,8 +103,8 @@
         button:hover {
             background-color: #2980b9;
         }
-		
-		/* 让按钮居中 */
+
+        /* 让按钮居中 */
         .button-container {
             display: flex;
             justify-content: center;
@@ -133,6 +140,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -171,7 +179,7 @@
                     <input type="text" id="endChapter" placeholder="请输入终止章节号（可为空）">
                 </div>
             </div>
-			
+
             <div class="input-row">
                 <div class="textarea-wrapper">
                     <label for="charLimit">每行字符数：</label>
@@ -183,27 +191,28 @@
                     <label for="convertOption">繁简转换</label>
                     <select id="convertOption">
                         <option value="noConversion">不转换</option>
-                        <option value="simplified2traditional">简体转繁体</option>
-                        <option value="traditional2simplified">繁体转简体</option>
+                        <option value="simplified2traditional">简体 → 繁体</option>
+                        <option value="traditional2simplified">繁体 → 简体</option>
                     </select>
                 </div>
-            
+
                 <!-- 是否转换英文字母和数字为全角 -->
                 <div class="textarea-wrapper">
-                    <label for="fullWidth">字母和数字转换为全角</label>
-                    <select id="fullWidth">
-                        <option value="noConversion">不转换</option>
-                        <option value="conversion">转换</option>
+                    <label for="widthConvert">半角全角转换</label>
+                    <select id="widthConvert">
+                        <option value="none">不转换</option>
+                        <option value="toFull">半角 → 全角</option>
+                        <option value="toHalf">全角 → 半角</option>
                     </select>
                 </div>
             </div>
-			
-			<div class="textarea-wrapper">
+
+            <div class="textarea-wrapper">
                 <label for="inputText">输入文本：</label>
-                <textarea id="inputText" rows="15" ></textarea>
+                <textarea id="inputText" rows="15"></textarea>
             </div>
 
-			<!-- 按钮居中容器 -->
+            <!-- 按钮居中容器 -->
             <div class="button-container">
                 <button onclick="formatText()">排版文本</button>
             </div>
@@ -218,7 +227,7 @@
                 <textarea id="briefOutput" rows="1"></textarea>
             </div>
 
-			<!-- 按钮居中容器 -->
+            <!-- 按钮居中容器 -->
             <div class="button-container">
                 <button onclick="copyText('briefOutput')">复制简要信息</button>
             </div>
@@ -228,7 +237,7 @@
                 <textarea id="formattedOutput" rows="10"></textarea>
             </div>
 
-			<!-- 按钮居中容器 -->
+            <!-- 按钮居中容器 -->
             <div class="button-container">
                 <button onclick="copyText('formattedOutput')">复制文本</button>
             </div>
@@ -258,15 +267,15 @@
         function initializeConverter() {
             const convertOption = document.getElementById('convertOption').value;
             if (convertOption === 'noConversion') {
-				converter = null;
-			}
-			else if (convertOption === 'simplified2traditional') {
+                converter = null;
+            }
+            else if (convertOption === 'simplified2traditional') {
                 converter = OpenCC.Converter({ from: 'cn', to: 'tw' });  // 简体转繁体
             } else {
                 converter = OpenCC.Converter({ from: 'tw', to: 'cn' });  // 繁体转简体
             }
         }
-		
+
         function updateEndChapter() {
             let start = parseInt(document.getElementById('startChapter').value);
             let count = parseInt(document.getElementById('chapterCount').value);
@@ -277,11 +286,18 @@
             }
         }
 
-		// 将英文字母和数字转换为全角
-        function convertToFullWidth(str) {
-            return str.replace(/([a-zA-Z0-9])/g, function (match) {
-                return String.fromCharCode(match.charCodeAt(0) + 0xFEE0); // 转换为全角
-            });
+        // 将英文字母和数字转换为全角
+        function convertWidth(text, mode) {
+            if (mode === "toFull") {
+                return text.replace(/[A-Za-z0-9]/g, function (s) {
+                    return String.fromCharCode(s.charCodeAt(0) + 65248);
+                });
+            } else if (mode === "toHalf") {
+                return text.replace(/[\uFF01-\uFF5E]/g, function (s) {
+                    return String.fromCharCode(s.charCodeAt(0) - 65248);
+                });
+            }
+            return text;
         }
 
         // 格式化文本的函数
@@ -296,15 +312,14 @@
             var endChapter = document.getElementById('endChapter').value;
             var website = document.getElementById('website').value.trim();
             var charLimit = parseInt(document.getElementById('charLimit').value);
-			var fullWidth = document.getElementById('fullWidth').value;
 
             // 章节号格式化
-			var formattedChapter;
+            var formattedChapter;
             if (!endChapter) {
-				formattedChapter = `（${startChapter}）`;
+                formattedChapter = `（${startChapter}）`;
             } else {
-				formattedChapter = `（${startChapter}-${endChapter}）`;
-			}
+                formattedChapter = `（${startChapter}-${endChapter}）`;
+            }
 
             var formattedTitle = `【${title}】${formattedChapter}`;
             var formattedAuthor = `作者：${author}`;
@@ -325,14 +340,14 @@
                 // 获取当前日期
                 var currentDate = new Date();
                 var formattedDate = currentDate.getFullYear() + '/' +
-                                (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' +
-                                currentDate.getDate().toString().padStart(2, '0');
+                    (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                    currentDate.getDate().toString().padStart(2, '0');
 
                 var postInfo = `${formattedDate} 发布于 ${website}\n`;
                 meta += postInfo;
             }
 
-			// 执行繁简转换（如果选择了转换）
+            // 执行繁简转换（如果选择了转换）
             var convertedText = inputText;
             if (converter) {
                 meta = converter(meta);
@@ -340,13 +355,14 @@
                 convertedText = converter(convertedText);
             }
 
-            // 如果勾选了全角转换
-            if (fullWidth === 'conversion') {
-                convertedText = convertToFullWidth(convertedText);
-            }
+            // 进行半角全角转换
+            var widthMode = document.getElementById("widthConvert").value;
+            meta = convertWidth(meta, widthMode);
+            briefText = convertWidth(briefText, widthMode);
+            convertedText = convertWidth(convertedText, widthMode);
 
             // 将文本按每行最大字符数分割并处理
-            var paragraphs = convertedText.split('\n').filter(text => text.trim() != '').map(function(paragraph) {
+            var paragraphs = convertedText.split('\n').filter(text => text.trim() != '').map(function (paragraph) {
                 paragraph = '　　' + paragraph.trim();
 
                 if (charLimit > 0) {
@@ -396,4 +412,5 @@
     </script>
 
 </body>
+
 </html>
