@@ -304,7 +304,7 @@
                     return String.fromCharCode(s.charCodeAt(0) + 65248);
                 });
             } else if (mode === "toHalf") {
-                return text.replace(/[\uFF01-\uFF5E]/g, function (s) {
+                return text.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (s) {
                     return String.fromCharCode(s.charCodeAt(0) - 65248);
                 });
             }
